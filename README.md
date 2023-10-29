@@ -32,8 +32,6 @@ python app/app.py
 
 ## Uso
 
-Por supuesto, aquí está la versión corregida de tu lista:
-
 1. Accede a la página web a través de `localhost:5000`. Al ejecutar la aplicación, se debería crear automáticamente una carpeta llamada `uploads_files` **FUERA** del directorio raíz. Si no se crea, hazlo manualmente.
 2. Utiliza el botón `Examinar...` para subir imágenes a la página.
 3. Después de subir las imágenes, presiona el botón `Subir imágenes`. De lo contrario, las imágenes se perderán.
