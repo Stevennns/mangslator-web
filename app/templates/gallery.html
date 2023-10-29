@@ -1,0 +1,28 @@
+{% extends "bootstrap/base.html" %} {% block title %}Galería de Imágenes{%
+endblock %} {% block head %} {{ super() }}
+
+<head>
+  <title>Galería de Imágenes</title>
+  <link rel="stylesheet" type="text/css" href="../static/css/main.css" />
+  <script src="../static/js/main.js"></script>
+</head>
+
+{% endblock %} {% block body %}
+
+<div class="d-flex">
+  <h1 class="text-center">Galería de Imágenes</h1>
+  <div id="image-gallery">
+    {% for img in uploaded_files %}
+    <!-- <p>{{item}}</p> -->
+    <img src="{{img}}" alt="{{ img }}" class="img-thumbnail" />
+    {% endfor %}
+  </div>
+
+  <div id="navigation" class="justify-content-between">
+    <button id="prev">Anterior</button>
+    <button id="next">Siguiente</button>
+  </div>
+  <a href="/" class="button">Volver a la página de inicio</a>
+</div>
+
+{% endblock %}

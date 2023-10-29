@@ -1,0 +1,15 @@
+body{
+    background-color: peru;
+    font-family: 'Roboto', sans-serif;
+}
+
+
+.button {
+    background-color: #007bff; /* Color de fondo */
+    color: white; /* Color del texto */
+    padding: 10px 20px; /* Espaciado interno */
+    text-decoration: none; /* Eliminar subrayado */
+    border: 1px solid #007bff; /* Borde */
+    border-radius: 5px; /* Borde redondeado */
+    display: inline-block; /* Mostrar como bloque en línea */
+}
