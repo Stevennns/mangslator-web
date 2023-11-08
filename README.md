@@ -15,7 +15,7 @@ git clone [insert repository URL]
 2. Crear un virtualenv (versión originar de python 3.11), por ejemplo:
 
 ```bash
-python3 -m venv venv
+python3 -m venv env
 ```
 
 3. Instalar dependencias:

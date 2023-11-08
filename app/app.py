@@ -1,10 +1,22 @@
-from flask import Flask, render_template, request, redirect, url_for, Blueprint
+from flask import (
+    Flask,
+    render_template,
+    request,
+    redirect,
+    url_for,
+    send_from_directory,
+    Blueprint,
+)
 from flask_bootstrap import Bootstrap
-
+import requests
+import shutil
 
 import os
 
 UPLOAD_FOLDER = os.path.abspath("../uploads_files")
+RESULT_FOLDER = os.path.abspath("../mangslator-results")
+# API_URL = "http://127.0.0.1:80/mangslator-ia/api"
+API_URL = "http://127.0.0.1:5004/process"
 # Asegúrate de que la carpeta 'uploads' exista o créala si no existe
 if not os.path.exists(UPLOAD_FOLDER):
     os.makedirs(UPLOAD_FOLDER)
@@ -21,6 +33,12 @@ blueprint_uploads = Blueprint(
     static_folder=UPLOAD_FOLDER,
     static_url_path="/uploads_files",
 )
+blueprint_results = Blueprint(
+    "results",
+    __name__,
+    static_folder=RESULT_FOLDER,
+    static_url_path="/mangslator-results",
+)
 
 
 app.config["UPLOAD_FOLDER"] = UPLOAD_FOLDER
@@ -28,6 +46,16 @@ app.config["UPLOAD_FOLDER"] = UPLOAD_FOLDER
 
 def allowed_file(filename):
     return "." in filename and filename.rsplit(".", 1)[1].lower() in ALLOWED_EXTENSIONS
+
+
+@app.route("/mangslator-results/<filename>")
+def serve_image(filename):
+    return send_from_directory(RESULT_FOLDER, filename)
+
+
+@app.route("/uploads_files/<filename>")
+def serve_image2(filename):
+    return send_from_directory(UPLOAD_FOLDER, filename)
 
 
 @app.before_request
@@ -51,6 +79,7 @@ def index():
         "colores": colores,
         "numero_colores": len(colores),
     }
+    print(UPLOAD_FOLDER)
     return render_template("index.html", data=data, files=UPLOAD_FOLDER)
 
 
@@ -61,26 +90,46 @@ def upload():
 
     files = request.files.getlist("file")
     uploaded_files = []
+    if os.path.exists(UPLOAD_FOLDER):
+        # Si existe, elimina su contenido
+        shutil.rmtree(UPLOAD_FOLDER)
 
+    # Crea el directorio
+    os.makedirs(UPLOAD_FOLDER)
     for file in files:
         if file and allowed_file(file.filename):
             filename = file.filename
             file.save(os.path.join(app.config["UPLOAD_FOLDER"], filename))
             uploaded_files.append(app.config["UPLOAD_FOLDER"] + filename)
-    print(uploaded_files)
-    return render_template("index.html", uploaded_files=uploaded_files)
+
+    uploaded_imgs = os.listdir(UPLOAD_FOLDER)
+    uploaded_paths = [
+        url_for("serve_image2", filename=filename) for filename in uploaded_imgs
+    ]
+    print("paths", uploaded_paths)
+
+    return render_template(
+        "index.html", uploaded_files=uploaded_files, imagenes=uploaded_paths
+    )
 
 
 @app.route("/gallery")
 def gallery():
     # requested_path = request.args.get("path")
-    uploaded_files = os.listdir(app.config["UPLOAD_FOLDER"])
-    print("archivos dento", uploaded_files)
-    uploaded_paths = [
-        os.path.join("../../../uploads_files", filename) for filename in uploaded_files
-    ]
-    print("paths", uploaded_paths)
-    return render_template("gallery.html", uploaded_files=uploaded_paths)
+    apicall = requests.post(API_URL)
+
+    if apicall.status_code == 200:
+        print("API call success")
+        uploaded_files = os.listdir(app.config["UPLOAD_FOLDER"])
+        print("archivos dento", uploaded_files)
+        uploaded_paths = [
+            url_for("serve_image", filename=filename) for filename in uploaded_files
+        ]
+        print("paths", uploaded_paths)
+        return render_template("gallery.html", uploaded_files=uploaded_paths)
+    else:
+        print("API call failed")
+        return render_template("gallery.html", uploaded_files=None)
 
 
 @app.route("/traducir/<palabra>")
@@ -108,9 +157,10 @@ def not_found(error):
 
 # return redirect(url_for("index"))
 
-
+# var = 'D:\Universidad\\2023-2\\Proyecto_de_IA\\mangslator-results\\011.jpg'
 if __name__ == "__main__":
     # app.add_url_rule("/gallery", view_func=gallery)
     app.register_error_handler(404, not_found)
     app.register_blueprint(blueprint_uploads)
-    app.run(debug=True, port=5000)
+    app.register_blueprint(blueprint_results)
+    app.run(debug=True, port=5003)

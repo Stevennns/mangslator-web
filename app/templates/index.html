@@ -1,7 +1,8 @@
 {% extends "bootstrap/base.html" %} {% block body %}
 <link rel="stylesheet" href="{{ url_for('static',filename='css/main.css') }}" />
 <div class="container d-flex align-items-center">
-  <h1 class="text-bg-warning">Magslator</h1>
+  <h1 class="text-bg-warning">Mangslator</h1>
+
   <form
     action="/upload"
     method="post"
@@ -11,15 +12,21 @@
     <input type="file" name="file" multiple accept=".jpg, .jpeg, .png, .gif" />
     <input type="submit" value="Subir Imágenes" />
   </form>
-  <div id="image-preview">
-    {% for path in uploaded_files %}
-    <a>{{ path }}</a>
-    <img src="{{path}}" alt="{{ path }}" />
-    {% endfor %}
-  </div>
   <div>
-    <!-- <li>{{files}}</li> -->
-    <a href="/gallery" class="btn btn-info">Galerías</a>
+    <a href="/gallery" class="btn btn-info">Traducir</a>
+  </div>
+  <!--<p>{{filename}}</p>
+   <img
+    src="{{ url_for('static',filename='../mangslator-results/019.jpg') }}"
+    alt="{{filename}}"
+  /> -->
+
+  <div id="image-preview d-flex">
+    {% for path in imagenes %}
+    <a>{{ path }}</a>
+    <img src="{{'..'+path}}" alt="{{ path }} " width="50%" />
+    <br />
+    {% endfor %}
   </div>
 </div>
 
