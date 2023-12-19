@@ -1,33 +1,44 @@
-{% extends "bootstrap/base.html" %} {% block body %}
+{% extends "bootstrap/base.html" %} 
+{% block body %}
 <link rel="stylesheet" href="{{ url_for('static',filename='css/main.css') }}" />
-<div class="container d-flex align-items-center">
-  <h1 class="text-bg-warning">Mangslator</h1>
-
-  <form
-    action="/upload"
-    method="post"
-    enctype="multipart/form-data"
-    class="d-flex-column align-items-center"
-  >
-    <input type="file" name="file" multiple accept=".jpg, .jpeg, .png, .gif" />
-    <input type="submit" value="Subir Imágenes" />
-  </form>
-  <div>
-    <a href="/gallery" class="btn btn-info">Traducir</a>
+<div class="container-fluid p-0">
+  <div class="header-image">
+    <img src="{{ url_for('static', filename='img/bottombanner.png') }}" alt="Imagen de encabezado">
   </div>
-  <!--<p>{{filename}}</p>
-   <img
-    src="{{ url_for('static',filename='../mangslator-results/019.jpg') }}"
-    alt="{{filename}}"
-  /> -->
 
-  <div id="image-preview d-flex">
-    {% for path in imagenes %}
-    <a>{{ path }}</a>
-    <img src="{{'..'+path}}" alt="{{ path }} " width="50%" />
-    <br />
-    {% endfor %}
+  <div class="container text-center mt-5">
+    <h1 class="text-bg-warning">Mangslator</h1>
+
+    <form
+      id="uploadForm"
+      action="./upload"
+      method="post"
+      enctype="multipart/form-data"
+      class="text-center mt-3"
+    >
+      <label class="custom-file-upload">
+        <input 
+          type="file" 
+          name="file" 
+          id="fileInput" 
+          multiple 
+          accept=".jpg, .jpeg, .png, .gif" 
+        />
+        Elegir Archivos
+      </label>
+      <a href="/mangslator-web/gallery" class="btn btn-info mt-2">Traducir</a>
+    </form>
+
+    <div id="image-preview" class="d-flex flex-wrap justify-content-center mt-3">
+      {% for path in imagenes %}
+      <div class="m-2">
+        <img src="{{'..'+path}}" alt="{{ path }} " width="50%" />
+      </div>
+      {% endfor %}
+    </div>
   </div>
 </div>
+
+<script src="{{ url_for('static', filename='js/index.js') }}"></script>
 
 {% endblock %}
