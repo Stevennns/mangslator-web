@@ -13,13 +13,17 @@ import shutil
 
 import os
 
-UPLOAD_FOLDER = os.path.abspath("../uploads_files")
-RESULT_FOLDER = os.path.abspath("../mangslator-results")
-# API_URL = "http://127.0.0.1:80/mangslator-ia/api"
-API_URL = "http://127.0.0.1:5004/process"
-# Asegúrate de que la carpeta 'uploads' exista o créala si no existe
+# Especifica la ruta absoluta al directorio 'uploads_files'
+UPLOAD_FOLDER = '/home/grupo3/app/uploads_files'
+RESULT_FOLDER = '/home/grupo3/app/mangslator-results'
+# Crea el directorio si no existe
 if not os.path.exists(UPLOAD_FOLDER):
     os.makedirs(UPLOAD_FOLDER)
+
+API_URL = "http://gate.dcc.uchile.cl:8633/mangslator-ia/process2"
+#API_URL = "http://127.0.0.1:5003/process2"
+print(os.path.abspath(UPLOAD_FOLDER))
+print(os.path.abspath(RESULT_FOLDER))
 
 app = Flask(__name__)
 
@@ -106,7 +110,7 @@ def upload():
     uploaded_paths = [
         url_for("serve_image2", filename=filename) for filename in uploaded_imgs
     ]
-    print("paths", uploaded_paths)
+    #print("paths", uploaded_paths)
 
     return render_template(
         "index.html", uploaded_files=uploaded_files, imagenes=uploaded_paths
@@ -121,15 +125,15 @@ def gallery():
     if apicall.status_code == 200:
         print("API call success")
         uploaded_files = os.listdir(app.config["UPLOAD_FOLDER"])
-        print("archivos dento", uploaded_files)
+        print("archivos dento (llamado api)", uploaded_files)
         uploaded_paths = [
             url_for("serve_image", filename=filename) for filename in uploaded_files
         ]
-        print("paths", uploaded_paths)
+        print("paths de la api", uploaded_paths)
         return render_template("gallery.html", uploaded_files=uploaded_paths)
     else:
         print("API call failed")
-        return render_template("gallery.html", uploaded_files=None)
+        return render_template("index.html")
 
 
 @app.route("/traducir/<palabra>")
@@ -160,7 +164,7 @@ def not_found(error):
 # var = 'D:\Universidad\\2023-2\\Proyecto_de_IA\\mangslator-results\\011.jpg'
 if __name__ == "__main__":
     # app.add_url_rule("/gallery", view_func=gallery)
-    app.register_error_handler(404, not_found)
+    #app.register_error_handler(404, not_found)
     app.register_blueprint(blueprint_uploads)
     app.register_blueprint(blueprint_results)
     app.run(debug=True, port=5003)
